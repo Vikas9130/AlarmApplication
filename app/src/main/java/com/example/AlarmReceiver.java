@@ -29,5 +29,4 @@ public class AlarmReceiver extends BroadcastReceiver {
             e.printStackTrace();
         }
     }
-
 }
