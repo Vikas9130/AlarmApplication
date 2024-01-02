@@ -2,6 +2,7 @@ package com.example.powernap;
 
 import static android.provider.Settings.System.DEFAULT_RINGTONE_URI;
 
+import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -9,6 +10,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -20,12 +22,6 @@ import com.example.R;
 
 public class PowerNapFragment extends Fragment {
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
-
     private EditText editTextNapTime;
     private Button buttonStartTimer;
     private TextView textViewTimer;
@@ -33,42 +29,10 @@ public class PowerNapFragment extends Fragment {
 
     private CountDownTimer countDownTimer;
     private long timeLeftInMillis;
-
-    // MediaPlayer for playing the ringtone
     private MediaPlayer mediaPlayer;
-
-    // Handler to stop the ringtone after 5 seconds
     private Handler handler = new Handler();
 
-    // Runnable to stop the ringtone after 5 seconds
-    private Runnable stopRingtoneRunnable = new Runnable() {
-        @Override
-        public void run() {
-            stopRingtone();
-        }
-    };
-
-    public PowerNapFragment() {
-        // Required empty public constructor
-    }
-
-    public static PowerNapFragment newInstance(String param1, String param2) {
-        PowerNapFragment fragment = new PowerNapFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private static final int MILLIS_IN_MINUTE = 60000;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,11 +44,10 @@ public class PowerNapFragment extends Fragment {
         textViewTimer = view.findViewById(R.id.textViewTimer);
         tvDND = view.findViewById(R.id.tvDND);
 
-        buttonStartTimer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startTimer();
-            }
+        buttonStartTimer.setOnClickListener(v -> startTimer());
+        view.setOnTouchListener((v, event) -> {
+            hideKeyboard();
+            return false;
         });
 
         return view;
@@ -92,15 +55,18 @@ public class PowerNapFragment extends Fragment {
 
     private void startTimer() {
         tvDND.setVisibility(View.VISIBLE);
+        buttonStartTimer.setVisibility(View.GONE);
+        editTextNapTime.setVisibility(View.GONE);
+
         String input = editTextNapTime.getText().toString();
         if (input.isEmpty()) {
-            Toast.makeText(requireContext(), "Please Enter Minutes.", Toast.LENGTH_LONG).show();
+            showToast("Please Enter Minutes.");
             return;
         }
 
-        long millisInput = Long.parseLong(input) * 60000; // Convert minutes to milliseconds
+        long millisInput = Long.parseLong(input) * MILLIS_IN_MINUTE;
         if (millisInput <= 0) {
-            Toast.makeText(requireContext(), "Please Enter greater than zero.", Toast.LENGTH_LONG).show();
+            showToast("Please Enter a value greater than zero.");
             return;
         }
 
@@ -120,16 +86,7 @@ public class PowerNapFragment extends Fragment {
 
             @Override
             public void onFinish() {
-                // Timer finished, handle the event
-                textViewTimer.setText("Timer Finished!");
-
-                // Play the ringtone
-                playRingtone();
-
-                // Schedule the stop of the ringtone after 5 seconds
-                handler.postDelayed(stopRingtoneRunnable, 5000);
-                tvDND.setVisibility(View.INVISIBLE);
-
+                handleTimerFinish();
             }
         }.start();
     }
@@ -142,21 +99,17 @@ public class PowerNapFragment extends Fragment {
         textViewTimer.setText(timeLeftFormatted);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
-        // Stop the ringtone if the fragment is destroyed
-        stopRingtone();
-
-        // Remove any pending callbacks from the handler
-        handler.removeCallbacks(stopRingtoneRunnable);
+    private void handleTimerFinish() {
+        textViewTimer.setText("Timer Finished!");
+        playRingtone();
+        handler.postDelayed(this::stopRingtone, 5000);
+        tvDND.setVisibility(View.INVISIBLE);
+        buttonStartTimer.setVisibility(View.VISIBLE);
+        editTextNapTime.setVisibility(View.VISIBLE);
     }
 
     private void playRingtone() {
-        mediaPlayer = MediaPlayer.create(requireContext(),DEFAULT_RINGTONE_URI); // Replace with your ringtone sound file
+        mediaPlayer = MediaPlayer.create(requireContext(), DEFAULT_RINGTONE_URI);
         mediaPlayer.start();
     }
 
@@ -166,5 +119,24 @@ public class PowerNapFragment extends Fragment {
             mediaPlayer.release();
             mediaPlayer = null;
         }
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editTextNapTime.getWindowToken(), 0);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+        stopRingtone();
+        handler.removeCallbacksAndMessages(null);
     }
 }

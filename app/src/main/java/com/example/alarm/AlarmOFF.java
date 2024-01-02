@@ -31,10 +31,14 @@ public class AlarmOFF extends AppCompatActivity {
         setContentView(alarmOffXml.getRoot());
 
         // Retrieve the application context
-        appContext = getApplicationContext();
+        appContext = this;
+
+        // Initialize the AlarmManager using the application context
+        alarmMgr = (AlarmManager) appContext.getSystemService(Context.ALARM_SERVICE);
 
         // Intent for AlarmReceiver
-        Intent receiverIntent = new Intent(this, AlarmReceiver.class);
+//        Intent receiverIntent = new Intent(this, AlarmReceiver.class);
+        Intent receiverIntent = getIntent();
 
         // PendingIntent for AlarmReceiver
         alarmIntent = PendingIntent.getBroadcast(
@@ -69,14 +73,17 @@ public class AlarmOFF extends AppCompatActivity {
     }
 
     private void cancelAlarm() {
+
         // Cancel the alarm
         if (alarmMgr != null && alarmIntent != null) {
             alarmMgr.cancel(alarmIntent);
         }
 
-        // Stop the MediaPlayer
-        if (mp != null && mp.isPlaying()) {
+        // Stop and release the MediaPlayer
+        if (mp != null) {
             mp.stop();
+            mp.release();
+            mp = null;
         }
 
         // Finish the activity
