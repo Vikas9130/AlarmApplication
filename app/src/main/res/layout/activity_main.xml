@@ -1,62 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
-    >
+    <LinearLayout
 
-    <!-- Main Relative Layout with Margin -->
-    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:layout_gravity="center"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:padding="20dp">
-
-        <!-- Alarm Title -->
-        <TextView
-            android:id="@+id/textViewAlarm"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <!-- Button to toggle PowerNap visibility -->
+        <Button
+            android:id="@+id/btnPowerNap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-            android:text="ALARM"
-            android:textSize="24sp" />
+            android:text="PowerNap" />
 
-        <!-- List TextView -->
-        <TextView
-            android:id="@+id/textViewList"
+        <!-- Button to toggle Alarm visibility -->
+        <Button
+            android:id="@+id/btnAlarm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textViewAlarm"
-            android:layout_marginTop="8dp"
-            android:text="List"
-            android:textSize="18sp" />
+            android:layout_marginLeft="16dp"
+            android:text="Alarm" />
+    </LinearLayout>
 
-        <!-- RecyclerView for Previous Alarms -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewAlarms"
+    <!-- Container for PowerNap elements -->
+    <LinearLayout
+        android:id="@+id/powerNapContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <FrameLayout
+            android:id="@+id/fragmentContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textViewList"
-            android:layout_marginTop="8dp" />
+            android:layout_height="match_parent" />
 
-        <!-- ImageButton at the bottom right corner -->
-        <ImageButton
-            android:id="@+id/imageButtonBack"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="28dp"
-            android:layout_marginBottom="29dp"
-            android:src="@drawable/ic_baseline_control_point_24" />
 
-    </RelativeLayout>
-</RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

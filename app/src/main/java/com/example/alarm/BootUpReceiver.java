@@ -1,4 +1,4 @@
-package com.example;
+package com.example.alarm;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -9,11 +9,13 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.example.MainActivity;
+
 public class BootUpReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 //        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-        if (intent.getAction() != null && intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
 
             // Start MainActivity on boot
             Intent i = new Intent(context, MainActivity.class);
