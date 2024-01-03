@@ -1,5 +1,8 @@
 package com.example.alarm;
 
+/*
+this is made only for when device get rebooted.
+ */
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
