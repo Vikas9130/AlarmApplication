@@ -117,8 +117,9 @@ public class AlarmFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (alarmManager != null) {
+        if (alarmManager != null && pendingIntent != null) {
             alarmManager.cancel(pendingIntent);
         }
     }
+
 }

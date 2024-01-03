@@ -49,12 +49,12 @@
         <!-- ImageButton at the bottom right corner -->
         <ImageButton
             android:id="@+id/imageButtonBack"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="@dimen/_38sdp"
+            android:layout_height="@dimen/_38sdp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginEnd="28dp"
-            android:layout_marginBottom="29dp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:layout_marginBottom="@dimen/_16sdp"
             android:src="@drawable/ic_baseline_control_point_24" />
 
     </RelativeLayout>
