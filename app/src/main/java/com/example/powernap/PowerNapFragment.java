@@ -7,9 +7,11 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +35,9 @@ public class PowerNapFragment extends Fragment {
     private Handler handler = new Handler();
 
     private static final int MILLIS_IN_MINUTE = 60000;
+
+    //03-01-24
+    private PowerManager.WakeLock wakeLock;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,6 +74,11 @@ public class PowerNapFragment extends Fragment {
             showToast("Please Enter a value greater than zero.");
             return;
         }
+        //03-01-24
+        // Acquire wake lock
+        acquireWakeLock();
+        // Keep the screen on during the countdown
+        requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         if (countDownTimer != null) {
             countDownTimer.cancel();
@@ -87,8 +97,28 @@ public class PowerNapFragment extends Fragment {
             @Override
             public void onFinish() {
                 handleTimerFinish();
+                //03-01-24
+                // Release wake lock when the timer finishes
+                releaseWakeLock();
+                // Clear the FLAG_KEEP_SCREEN_ON flag to allow normal screen behavior
+                requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
             }
         }.start();
+    }
+    //03-01-24
+    private void acquireWakeLock() {
+        PowerManager powerManager = (PowerManager) requireContext().getSystemService(Context.POWER_SERVICE);
+        if (powerManager != null) {
+            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PowerNapWakeLock");
+            wakeLock.acquire();
+        }
+    }
+    //03-01-24
+    private void releaseWakeLock() {
+        if (wakeLock != null && wakeLock.isHeld()) {
+            wakeLock.release();
+        }
     }
 
     private void updateTimerText() {
