@@ -110,10 +110,11 @@ public class PowerNapFragment extends Fragment {
     private void acquireWakeLock() {
         PowerManager powerManager = (PowerManager) requireContext().getSystemService(Context.POWER_SERVICE);
         if (powerManager != null) {
-            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PowerNapWakeLock");
+            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "com.example:PowerNapWakeLock");
             wakeLock.acquire();
         }
     }
+
     //03-01-24
     private void releaseWakeLock() {
         if (wakeLock != null && wakeLock.isHeld()) {
@@ -139,9 +140,23 @@ public class PowerNapFragment extends Fragment {
     }
 
     private void playRingtone() {
-        mediaPlayer = MediaPlayer.create(requireContext(), DEFAULT_RINGTONE_URI);
-        mediaPlayer.start();
+        showToast("in playRingtone method.");
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer.create(requireContext(), DEFAULT_RINGTONE_URI);
+//            mediaPlayer = MediaPlayer.create(requireContext(), R.raw.powenapmusic);
+            showToast("media playing");
+            if (mediaPlayer != null) {
+                mediaPlayer.start();
+            } else {
+                // Handle the case where MediaPlayer creation fails
+                showToast("Failed to create MediaPlayer.");
+            }
+        } else {
+            // Handle the case where MediaPlayer is already playing
+            showToast("MediaPlayer is already playing.");
+        }
     }
+
 
     private void stopRingtone() {
         if (mediaPlayer != null) {

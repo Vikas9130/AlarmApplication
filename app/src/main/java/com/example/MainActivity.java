@@ -9,11 +9,10 @@ import com.example.alarm.AlarmFragment;
 import com.example.databinding.ActivityMainBinding;
 import com.example.meditation.MeditationFragment;
 import com.example.powernap.PowerNapFragment;
+import com.google.android.material.tabs.TabLayout;
 
 public class MainActivity extends AppCompatActivity {
-
     public static final int ALARM_REQ_CODE = 100;
-
     private ActivityMainBinding mainXml;
 
     @Override
@@ -22,16 +21,41 @@ public class MainActivity extends AppCompatActivity {
         mainXml = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mainXml.getRoot());
 
-        initializeButtons();
+        setupTabs();
         loadDefaultFragment(savedInstanceState);
     }
 
-    private void initializeButtons() {
-        mainXml.btnPowerNap.setOnClickListener(view -> replaceFragment(new PowerNapFragment()));
+    private void setupTabs() {
+        mainXml.tabLayout.addTab(mainXml.tabLayout.newTab().setText("Alarm"));
+        mainXml.tabLayout.addTab(mainXml.tabLayout.newTab().setText("Power Nap"));
+        mainXml.tabLayout.addTab(mainXml.tabLayout.newTab().setText("Meditation"));
 
-        mainXml.btnAlarm.setOnClickListener(view -> replaceFragment(new AlarmFragment()));
+        mainXml.tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        mainXml.btnMeditation.setOnClickListener(view -> replaceFragment(new MeditationFragment()));
+        mainXml.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0:
+                        replaceFragment(new AlarmFragment());
+                        break;
+                    case 1:
+                        replaceFragment(new PowerNapFragment());
+                        break;
+                    case 2:
+                        replaceFragment(new MeditationFragment());
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
     }
 
     private void loadDefaultFragment(Bundle savedInstanceState) {
@@ -43,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
     private void replaceFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
-                .addToBackStack(null)
                 .commit();
     }
 }

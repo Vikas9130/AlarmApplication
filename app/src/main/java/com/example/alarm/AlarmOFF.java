@@ -14,6 +14,7 @@ import com.example.MainActivity;
 import com.example.databinding.ActivityAlarmOffBinding;
 
 public class AlarmOFF extends AppCompatActivity {
+
     private MediaPlayer mediaPlayer;
     private Context appContext;
     private ActivityAlarmOffBinding alarmOffXml;
@@ -40,6 +41,7 @@ public class AlarmOFF extends AppCompatActivity {
                 new Intent(this, AlarmReceiver.class),
                 PendingIntent.FLAG_IMMUTABLE
         );
+
 
         // Initialize and start the MediaPlayer
         mediaPlayer = MediaPlayer.create(appContext, Settings.System.DEFAULT_RINGTONE_URI);

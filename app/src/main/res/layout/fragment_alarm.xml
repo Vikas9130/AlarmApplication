@@ -12,11 +12,11 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:layout_gravity="center"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:padding="20dp">
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:padding="@dimen/_20sdp">
 
         <!-- Alarm Title -->
         <TextView
@@ -24,9 +24,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/_16sdp"
             android:text="ALARM"
-            android:textSize="24sp" />
+            android:textSize="@dimen/_24sdp" />
 
         <!-- List TextView -->
         <TextView
@@ -34,28 +34,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textViewAlarm"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:text="List"
-            android:textSize="18sp" />
+            android:textSize="@dimen/_18sdp" />
 
         <!-- RecyclerView for Previous Alarms -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewAlarms"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_300sdp"
             android:layout_below="@+id/textViewList"
-            android:layout_marginTop="8dp" />
+
+            android:layout_marginTop="@dimen/_8sdp" />
 
         <!-- ImageButton at the bottom right corner -->
         <ImageButton
             android:id="@+id/imageButtonBack"
-            android:layout_width="@dimen/_38sdp"
-            android:layout_height="@dimen/_38sdp"
+            android:layout_width="@dimen/_65sdp"
+            android:layout_height="@dimen/_65sdp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="@dimen/_16sdp"
             android:layout_marginBottom="@dimen/_16sdp"
-            android:src="@drawable/ic_baseline_control_point_24" />
+            android:src="@drawable/plusbutton" />
 
     </RelativeLayout>
 
