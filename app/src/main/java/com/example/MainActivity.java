@@ -1,8 +1,10 @@
 package com.example;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.alarm.AlarmFragment;
@@ -21,14 +23,21 @@ public class MainActivity extends AppCompatActivity {
         mainXml = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mainXml.getRoot());
 
+
+
         setupTabs();
         loadDefaultFragment(savedInstanceState);
     }
 
     private void setupTabs() {
-        mainXml.tabLayout.addTab(mainXml.tabLayout.newTab().setText("Alarm"));
-        mainXml.tabLayout.addTab(mainXml.tabLayout.newTab().setText("Power Nap"));
-        mainXml.tabLayout.addTab(mainXml.tabLayout.newTab().setText("Meditation"));
+        // you have stored icons named sleepalarm, sleep, and meditation in the drawable folder
+        Drawable sleepAlarmDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.sleepalarm, null);
+        Drawable sleepDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.alarm, null);
+        Drawable meditationDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.meditation, null);
+
+        mainXml.tabLayout.addTab(mainXml.tabLayout.newTab().setIcon(sleepDrawable));
+        mainXml.tabLayout.addTab(mainXml.tabLayout.newTab().setIcon(sleepAlarmDrawable));
+        mainXml.tabLayout.addTab(mainXml.tabLayout.newTab().setIcon(meditationDrawable));
 
         mainXml.tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
