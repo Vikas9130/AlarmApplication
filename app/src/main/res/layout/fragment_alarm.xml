@@ -28,12 +28,23 @@
             android:text="ALARM"
             android:textSize="@dimen/_24sdp" />
 
+        <Spinner
+            android:id="@+id/daySpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewAlarm"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:entries="@array/days_of_week"
+            android:prompt="@string/select_day_prompt" />
+
         <!-- List TextView -->
         <TextView
+
             android:id="@+id/textViewList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textViewAlarm"
+            android:layout_below="@+id/daySpinner"
             android:layout_marginTop="@dimen/_8sdp"
             android:text="List"
             android:textSize="@dimen/_18sdp" />

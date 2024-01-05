@@ -1,16 +1,15 @@
+// AlarmReceiver.java
 package com.example.alarm;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.provider.Settings;
 
 public class AlarmReceiver extends BroadcastReceiver {
+    public static final String ALARM_ACTION = "com.example.alarm.ALARM_TRIGGERED";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
         // Create an Intent for the AlarmOFF activity
         Intent alarmOffIntent = new Intent(context, AlarmOFF.class);
 

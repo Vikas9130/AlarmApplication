@@ -1,4 +1,7 @@
+// AlarmOFF.java
 package com.example.alarm;
+
+import static com.example.MainActivity.ALARM_REQ_CODE;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -7,10 +10,8 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.provider.Settings;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.MainActivity;
+import com.example.R; // Make sure to replace this with the correct package name
 import com.example.databinding.ActivityAlarmOffBinding;
 
 public class AlarmOFF extends AppCompatActivity {
@@ -34,14 +35,12 @@ public class AlarmOFF extends AppCompatActivity {
         // Initialize the AlarmManager using the application context
         alarmMgr = (AlarmManager) appContext.getSystemService(Context.ALARM_SERVICE);
 
-        // PendingIntent for AlarmReceiver
         alarmIntent = PendingIntent.getBroadcast(
                 this,
-                MainActivity.ALARM_REQ_CODE,
-                new Intent(this, AlarmReceiver.class),
+                ALARM_REQ_CODE,
+                new Intent(this, AlarmReceiver.class).setAction(AlarmReceiver.ALARM_ACTION), // Set the action here
                 PendingIntent.FLAG_IMMUTABLE
         );
-
 
         // Initialize and start the MediaPlayer
         mediaPlayer = MediaPlayer.create(appContext, Settings.System.DEFAULT_RINGTONE_URI);
