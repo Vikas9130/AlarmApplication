@@ -84,14 +84,14 @@ public class AlarmFragment extends Fragment {
                 requireActivity(),
                 (view, hourOfDay, minute) -> {
                     totalSeconds = (long) (hourOfDay * 60L + minute) * 60;
-                    Log.d(TAG, "totalSeconds: " + (totalSeconds - 30));
+                    Log.d(TAG, "totalSeconds: " + (totalSeconds));
 
                     int currentHourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
                     int currentMinuteOfDay = calendar.get(Calendar.MINUTE);
                     currentSeconds = (currentHourOfDay * 60 + currentMinuteOfDay) * 60;
                     Log.d(TAG, "currentSeconds: " + currentSeconds);
 
-                    matchSeconds((totalSeconds - 30), currentSeconds);
+                    matchSeconds((totalSeconds), currentSeconds);
                 },
                 currentHour,
                 currentMinute,
