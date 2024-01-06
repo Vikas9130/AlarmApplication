@@ -1,13 +1,13 @@
 package com.example;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+
 import com.example.alarm.AlarmFragment;
-import com.example.powernap.PowerNapFragment;
 import com.example.meditation.MeditationFragment;
+import com.example.powernap.PowerNapFragment;
 
 public class MyPagerAdapter extends FragmentStateAdapter {
 
