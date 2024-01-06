@@ -6,7 +6,9 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.room.Room;
 
+import com.example.alarm.AlarmDatabase;
 import com.example.alarm.AlarmFragment;
 import com.example.databinding.ActivityMainBinding;
 import com.example.meditation.MeditationFragment;
@@ -16,13 +18,15 @@ import com.google.android.material.tabs.TabLayout;
 public class MainActivity extends AppCompatActivity {
     public static final int ALARM_REQ_CODE = 100;
     private ActivityMainBinding mainXml;
+    public static AlarmDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainXml = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mainXml.getRoot());
-
+        database = Room.databaseBuilder(this, AlarmDatabase.class, "alarm_database")
+                .build();
 
 
         setupTabs();

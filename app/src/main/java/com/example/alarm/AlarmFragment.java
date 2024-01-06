@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -22,17 +23,23 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
+import com.example.MainActivity;
 import com.example.R;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 public class AlarmFragment extends Fragment {
 
     private static final String TAG = "AlarmFragment";
     private static final int ALARM_REQ_CODE = 100;
-
+    ArrayList<DataAlarm> alarmList;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
     private long totalSeconds;
@@ -42,7 +49,9 @@ public class AlarmFragment extends Fragment {
     private RadioGroup amPmRadioGroup;
     private RadioButton amRadioButton;
     private RadioButton pmRadioButton;
-
+    private boolean isAM;
+    private boolean isPM;
+    private AlarmAdapter alarmAdapter;
     private ImageButton imageButtonBack;
 
     @Override
@@ -57,9 +66,17 @@ public class AlarmFragment extends Fragment {
 
         daySpinner = view.findViewById(R.id.daySpinner);
         imageButtonBack = view.findViewById(R.id.imageButtonBack);
+        alarmList = new ArrayList<DataAlarm>();
+        // RecyclerView setup
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewAlarms);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        alarmAdapter = new AlarmAdapter(alarmList);
+        recyclerView.setAdapter(alarmAdapter);
 
         imageButtonBack.setOnClickListener(v -> showTimePicker());
 
+        // Load existing alarms from Room database
+        loadAlarmsFromDatabaseAsync();
         return view;
     }
 
@@ -73,6 +90,8 @@ public class AlarmFragment extends Fragment {
         pendingIntent = PendingIntent.getBroadcast(requireActivity(), ALARM_REQ_CODE, intent, PendingIntent.FLAG_IMMUTABLE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis() + milliSeconds), pendingIntent);
         enableBootReceiver(true);
+        // Notify the adapter that the data set has changed
+        alarmAdapter.notifyDataSetChanged();
     }
 
     private void matchSeconds(long totalSeconds, long currentSeconds) {
@@ -86,6 +105,8 @@ public class AlarmFragment extends Fragment {
     }
 
     private void showTimePicker() {
+
+        DataAlarm dataAlarm = new DataAlarm();
         Calendar calendar = Calendar.getInstance();
         int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
         int currentMinute = calendar.get(Calendar.MINUTE);
@@ -99,32 +120,64 @@ public class AlarmFragment extends Fragment {
 
                     int currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
 
-                    // Calculate the totalSeconds for the selected day and time
-                    totalSeconds = (selectedDayIndex - currentDayOfWeek + 7) % 7 * 24 * 60 * 60 + (hourOfDay * 60L + minute) * 60;
+                    // Setting values to DataAlarm class
+                    dataAlarm.setHour(hourOfDay);
+                    dataAlarm.setMinute(minute);
+                    dataAlarm.setDay(selectedDay);
 
-                    // Check if the calculated time is in the past for the current day
-                    if (totalSeconds < currentSeconds) {
-                        // Adjust for the next week if the selected time is in the past
-                        totalSeconds += 7 * 24 * 60 * 60;
+                    // Check if the selected hour is in the AM or PM
+                    isAM = (hourOfDay >= 0 && hourOfDay < 12);
+                    dataAlarm.setIsAm(isAM);
+                    if (isAM) {
+                        isPM = false;
+                    } else {
+                        isPM = true;
                     }
+                    dataAlarm.setIsAm(isPM);
 
-                    Log.d(TAG, "totalSeconds: " + (totalSeconds));
+                    // Add dataAlarm to the ArrayList
+                    alarmList.add(dataAlarm);
 
-                    // Calculate current time in seconds
-                    currentSeconds = (currentHour * 60 + currentMinute) * 60;
-                    Log.d(TAG, "currentSeconds: " + currentSeconds);
+                    // Save the new alarm to the Room database in a background thread
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            MainActivity.database.alarmDao().addAlarm(dataAlarm);
+                            return null;
+                        }
 
-                    // Calculate hours and minutes remaining
-                    long secondsRemaining = totalSeconds - currentSeconds;
-                    long hoursRemaining = secondsRemaining / 3600;
-                    long minutesRemaining = (secondsRemaining % 3600) / 60;
+                        @Override
+                        protected void onPostExecute(Void aVoid) {
+                            super.onPostExecute(aVoid);
 
-                    String message = String.format("Alarm will ring in %d hours and %d minutes.", hoursRemaining, minutesRemaining);
+                            // Calculate the totalSeconds for the selected day and time
+                            totalSeconds = (selectedDayIndex - currentDayOfWeek + 7) % 7 * 24 * 60 * 60 + (hourOfDay * 60L + minute) * 60;
 
-                    Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+                            // Check if the calculated time is in the past for the current day
+                            if (totalSeconds < currentSeconds) {
+                                // Adjust for the next week if the selected time is in the past
+                                totalSeconds += 7 * 24 * 60 * 60;
+                            }
 
-                    // Call your method to handle the alarm logic (e.g., matchSeconds)
-                    matchSeconds(totalSeconds, currentSeconds);
+                            Log.d(TAG, "totalSeconds: " + (totalSeconds));
+
+                            // Calculate current time in seconds
+                            currentSeconds = (currentHour * 60 + currentMinute) * 60;
+                            Log.d(TAG, "currentSeconds: " + currentSeconds);
+
+                            // Calculate hours and minutes remaining
+                            long secondsRemaining = totalSeconds - currentSeconds;
+                            long hoursRemaining = secondsRemaining / 3600;
+                            long minutesRemaining = (secondsRemaining % 3600) / 60;
+
+                            String message = String.format("Alarm will ring in %d hours and %d minutes.", hoursRemaining, minutesRemaining);
+
+                            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+
+                            // Call your method to handle the alarm logic (e.g., matchSeconds)
+                            matchSeconds(totalSeconds, currentSeconds);
+                        }
+                    }.execute();
                 },
                 currentHour,
                 currentMinute,
@@ -133,7 +186,6 @@ public class AlarmFragment extends Fragment {
 
         timePickerDialog.show();
     }
-
 
     private void enableBootReceiver(boolean enable) {
         ComponentName receiver = new ComponentName(requireActivity(), BootReceiver.class);
@@ -151,5 +203,26 @@ public class AlarmFragment extends Fragment {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putLong("alarm_time", milliSeconds);
         editor.apply();
+    }
+
+    private void loadAlarmsFromDatabaseAsync() {
+        new AsyncTask<Void, Void, List<DataAlarm>>() {
+            @Override
+            protected List<DataAlarm> doInBackground(Void... voids) {
+                // Retrieve existing alarms from the Room database on a background thread
+                return MainActivity.database.alarmDao().getAllAlarm();
+            }
+
+            @Override
+            protected void onPostExecute(List<DataAlarm> databaseAlarms) {
+                super.onPostExecute(databaseAlarms);
+
+                // Add retrieved alarms to the ArrayList
+                alarmList.addAll(databaseAlarms);
+
+                // Notify the adapter that the data set has changed
+                alarmAdapter.notifyDataSetChanged();
+            }
+        }.execute();
     }
 }
