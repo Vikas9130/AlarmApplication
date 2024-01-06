@@ -1,4 +1,3 @@
-// AlarmOFF.java
 package com.example.alarm;
 
 import static com.example.MainActivity.ALARM_REQ_CODE;

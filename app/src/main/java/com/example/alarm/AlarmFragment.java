@@ -1,5 +1,6 @@
-// AlarmFragment.java
 package com.example.alarm;
+
+import static com.example.MainActivity.ALARM_REQ_CODE;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -25,7 +26,6 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
 import com.example.MainActivity;
 import com.example.R;
@@ -38,7 +38,6 @@ import java.util.List;
 public class AlarmFragment extends Fragment {
 
     private static final String TAG = "AlarmFragment";
-    private static final int ALARM_REQ_CODE = 100;
     ArrayList<DataAlarm> alarmList;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
@@ -46,9 +45,6 @@ public class AlarmFragment extends Fragment {
     private long currentSeconds;
     private long milliSeconds;
     private Spinner daySpinner;
-    private RadioGroup amPmRadioGroup;
-    private RadioButton amRadioButton;
-    private RadioButton pmRadioButton;
     private boolean isAM;
     private boolean isPM;
     private AlarmAdapter alarmAdapter;
@@ -128,7 +124,7 @@ public class AlarmFragment extends Fragment {
                     // Check if the selected hour is in the AM or PM
                     isAM = (hourOfDay >= 0 && hourOfDay < 12);
                     dataAlarm.setIsAm(isAM);
-                    if (isAM) {
+                    if (!isAM) {
                         isPM = false;
                     } else {
                         isPM = true;
@@ -142,7 +138,20 @@ public class AlarmFragment extends Fragment {
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
-                            MainActivity.database.alarmDao().addAlarm(dataAlarm);
+                            // Retrieve existing alarms from the Room database
+                            List<DataAlarm> databaseAlarms = MainActivity.database.alarmDao().getAllAlarm(8);
+
+                            // If the size exceeds 7, remove the oldest alarms to make room for the new one
+                            while (databaseAlarms.size() >= 8) {
+                                DataAlarm oldestAlarm = databaseAlarms.get(0);
+                                MainActivity.database.alarmDao().deleteAlarm(oldestAlarm);
+                                databaseAlarms.remove(oldestAlarm);
+                            }
+
+                            // Add the new alarm to the Room database
+                            if (databaseAlarms.size() < 8) {
+                                MainActivity.database.alarmDao().addAlarm(dataAlarm);
+                            }
                             return null;
                         }
 
@@ -175,7 +184,7 @@ public class AlarmFragment extends Fragment {
                             Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
 
                             // Call your method to handle the alarm logic (e.g., matchSeconds)
-                            matchSeconds(totalSeconds, currentSeconds);
+                            matchSeconds((totalSeconds-60), currentSeconds);
                         }
                     }.execute();
                 },
@@ -210,12 +219,17 @@ public class AlarmFragment extends Fragment {
             @Override
             protected List<DataAlarm> doInBackground(Void... voids) {
                 // Retrieve existing alarms from the Room database on a background thread
-                return MainActivity.database.alarmDao().getAllAlarm();
+                List<DataAlarm> databaseAlarms = MainActivity.database.alarmDao().getAllAlarm(8);
+
+                return databaseAlarms;
             }
 
             @Override
             protected void onPostExecute(List<DataAlarm> databaseAlarms) {
                 super.onPostExecute(databaseAlarms);
+
+                // Clear the existing list before adding retrieved alarms
+                alarmList.clear();
 
                 // Add retrieved alarms to the ArrayList
                 alarmList.addAll(databaseAlarms);

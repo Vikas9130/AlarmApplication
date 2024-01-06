@@ -15,6 +15,11 @@ public interface AlarmDAO {
     @Delete
     public void deleteAlarm(DataAlarm dataAlarm);
 
-    @Query("select * from alarm")
-    public List<DataAlarm> getAllAlarm();
+//    @Query("select * from alarm")
+//    public List<DataAlarm> getAllAlarm();
+
+    @Query("SELECT * FROM alarm ORDER BY id DESC LIMIT :limit")
+    List<DataAlarm> getAllAlarm(int limit);
+
+
 }

@@ -25,9 +25,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mainXml = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mainXml.getRoot());
+
         database = Room.databaseBuilder(this, AlarmDatabase.class, "alarm_database")
                 .build();
-
 
         setupTabs();
         loadDefaultFragment(savedInstanceState);
