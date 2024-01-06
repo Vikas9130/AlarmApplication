@@ -18,6 +18,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.R;
@@ -43,6 +45,11 @@ public class PowerNapFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_power_nap, container, false);
+        // Set the title for the ActionBar
+        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("Power Nap");
+        }
 
         editTextNapTime = view.findViewById(R.id.editTextNapTime);
         buttonStartTimer = view.findViewById(R.id.buttonStartTimer);
