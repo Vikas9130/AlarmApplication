@@ -40,10 +40,6 @@ public class MainActivity extends AppCompatActivity {
         Drawable sleepDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.alarm, null);
         Drawable meditationDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.meditation, null);
 
-        mainXml.tabLayout.addTab(mainXml.tabLayout.newTab().setIcon(sleepDrawable));
-        mainXml.tabLayout.addTab(mainXml.tabLayout.newTab().setIcon(sleepAlarmDrawable));
-        mainXml.tabLayout.addTab(mainXml.tabLayout.newTab().setIcon(meditationDrawable));
-
         mainXml.tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager(), getLifecycle());
@@ -52,13 +48,13 @@ public class MainActivity extends AppCompatActivity {
         new TabLayoutMediator(mainXml.tabLayout, mainXml.fragmentContainer, (tab, position) -> {
             switch (position) {
                 case 0:
-                    tab.setText("Alarm");
+                    tab.setIcon(sleepDrawable);
                     break;
                 case 1:
-                    tab.setText("Power Nap");
+                    tab.setIcon(sleepAlarmDrawable);
                     break;
                 case 2:
-                    tab.setText("Meditation");
+                    tab.setIcon(meditationDrawable);
                     break;
             }
         }).attach();
