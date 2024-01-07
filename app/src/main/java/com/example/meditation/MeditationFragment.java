@@ -53,11 +53,7 @@ public class MeditationFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Set the title for the ActionBar
-        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle("Meditation");
-        }
+
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_meditation, container, false);
@@ -94,8 +90,16 @@ public class MeditationFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        updateActionBarTitle();
         if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
             mediaPlayer.start();
+        }
+    }
+
+    private void updateActionBarTitle() {
+        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("Meditation");
         }
     }
 }

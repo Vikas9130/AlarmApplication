@@ -61,11 +61,7 @@ public class AlarmFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_alarm, container, false);
 
-        // Set the title for the ActionBar
-        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle("Alarm");
-        }
+
 
 
         daySpinner = view.findViewById(R.id.daySpinner);
@@ -247,4 +243,16 @@ public class AlarmFragment extends Fragment {
             }
         }.execute();
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateActionBarTitle();
+    }
+    private void updateActionBarTitle() {
+        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("Alarm");
+        }
+    }
+
 }

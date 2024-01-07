@@ -45,11 +45,7 @@ public class PowerNapFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_power_nap, container, false);
-        // Set the title for the ActionBar
-        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle("Power Nap");
-        }
+
 
         editTextNapTime = view.findViewById(R.id.editTextNapTime);
         buttonStartTimer = view.findViewById(R.id.buttonStartTimer);
@@ -190,5 +186,16 @@ public class PowerNapFragment extends Fragment {
         }
         stopRingtone();
         handler.removeCallbacksAndMessages(null);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateActionBarTitle();
+    }
+    private void updateActionBarTitle() {
+        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("Power Nap");
+        }
     }
 }
