@@ -3,17 +3,12 @@ package com.example;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.fragment.app.Fragment;
 import androidx.room.Room;
 
 import com.example.alarm.AlarmDatabase;
-import com.example.alarm.AlarmFragment;
 import com.example.databinding.ActivityMainBinding;
-import com.example.meditation.MeditationFragment;
-import com.example.powernap.PowerNapFragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
