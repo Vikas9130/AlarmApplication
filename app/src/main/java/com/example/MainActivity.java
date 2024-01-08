@@ -11,7 +11,7 @@ import com.example.alarm.AlarmDatabase;
 import com.example.databinding.ActivityMainBinding;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-//testing branch
+
 public class MainActivity extends AppCompatActivity {
     public static final int ALARM_REQ_CODE = 100;
     private ActivityMainBinding mainXml;
